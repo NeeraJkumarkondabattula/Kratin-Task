@@ -29,8 +29,8 @@ const Appointments = () => {
     fetch();
   }, []);
 
+  console.log(appointments);
   const handleCancelAppointment = async (id) => {
-    console.log(id);
     async function getData() {
       // dispatch(showLoader());
       await axios
@@ -50,7 +50,8 @@ const Appointments = () => {
 
   return (
     <Container>
-      {appointments &&
+      {appointments && appointments.length != 0 ? (
+        appointments &&
         appointments.map((doctor) => {
           return (
             <div>
@@ -59,11 +60,13 @@ const Appointments = () => {
                 onClick={() => handleCancelAppointment(doctor._id)}
               />
               <h3 onClick={() => navigate(`/doctor/${doctor._id}`)}>
-                {doctor.firstName + " " + doctor.lastName}
+                {doctor.isDoctor === false
+                  ? doctor.name
+                  : doctor.firstName + " " + doctor.lastName}
               </h3>
               <h4>
                 <RiShieldStarLine />
-                {doctor.specialization}
+                {doctor.isDoctor === false ? "User" : doctor.specialization}
               </h4>
               <br />
               <p>
@@ -75,14 +78,19 @@ const Appointments = () => {
                 {doctor.phone}
               </p>
               <p>
-                <WiTime11 />
+                {doctor.isDoctor === false ? null : <WiTime11 />}
                 <p>
-                  {doctor.fromTime} - {doctor.toTime}
+                  {doctor.isDoctor === false
+                    ? ""
+                    : doctor.fromTime - doctor.toTime}
                 </p>
               </p>
             </div>
           );
-        })}
+        })
+      ) : (
+        <h2>No Appointments</h2>
+      )}
     </Container>
   );
 };
@@ -92,7 +100,6 @@ const Container = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   /* background-color: red; */
-
   div {
     padding: 1rem;
     background-color: #e7eaf6;
@@ -108,6 +115,11 @@ const Container = styled.div`
       align-items: center;
       gap: 0.5rem;
     }
+  }
+  .center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 

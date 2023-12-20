@@ -3,13 +3,14 @@ import styled from "styled-components";
 import medicatelogo from "../assets/Medicate-logo.png";
 import { FaRegUserCircle } from "react-icons/fa";
 import { HiBookmark } from "react-icons/hi";
-import { LuUsers } from "react-icons/lu";
+import { LuBadge, LuUsers } from "react-icons/lu";
 import { RiHealthBookLine } from "react-icons/ri";
 import { RiHome2Line } from "react-icons/ri";
 import { FaUserDoctor } from "react-icons/fa6";
 import { LuLogOut } from "react-icons/lu";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { CgMenuLeft } from "react-icons/cg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Circles } from "react-loader-spinner";
 import axios from "axios";
 import { RxCross2 } from "react-icons/rx";
@@ -20,6 +21,7 @@ const Layout = ({ children }) => {
   const active = window.location.pathname;
   const { loading } = useSelector((state) => state.alerts);
   const [collapse, setCollapse] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [user, setUser] = useState();
   const userMenu = [
@@ -42,6 +44,28 @@ const Layout = ({ children }) => {
       option: "Apply Doctor",
       icon: <FaUserDoctor />,
       link: "/applydoctor",
+    },
+    {
+      option: "Logout",
+      icon: <LuLogOut />,
+      link: "/logout",
+    },
+  ];
+  const doctorMenu = [
+    {
+      option: "Home",
+      icon: <RiHome2Line />,
+      link: "/",
+    },
+    {
+      option: "Profile",
+      icon: <FaRegUserCircle />,
+      link: "/profile",
+    },
+    {
+      option: "Appointments",
+      icon: <RiHealthBookLine />,
+      link: "/appointments",
     },
     {
       option: "Logout",
@@ -78,7 +102,7 @@ const Layout = ({ children }) => {
   ];
   useEffect(() => {
     async function getData() {
-      dispatch(showLoader());
+      // dispatch(showLoader());
       await axios
         .post("http://localhost:3433/api/user/auth", {
           headers: {
@@ -86,12 +110,12 @@ const Layout = ({ children }) => {
           },
         })
         .then((res) => {
-          dispatch(closeLoader());
+          // dispatch(closeLoader());
           setUser(res.data.user);
         });
     }
     getData();
-  }, []);
+  }, [user]);
 
   var menu;
   var name;
@@ -102,6 +126,8 @@ const Layout = ({ children }) => {
     menu = adminMenu;
   } else if (user && user.isUser) {
     menu = userMenu;
+  } else {
+    menu = doctorMenu;
   }
   if (user) {
     name = user.name;
@@ -150,6 +176,17 @@ const Layout = ({ children }) => {
               ) : (
                 <RxCross2 onClick={() => setCollapse(true)} />
               )}
+              <div className="badge-div">
+                {user && user.unseenNotifications.length != 0 && (
+                  <span className="badge">
+                    {user && user.unseenNotifications.length}
+                  </span>
+                )}
+                <IoNotificationsOutline
+                  style={{ fontSize: "30px" }}
+                  onClick={() => navigate("/notifications")}
+                />
+              </div>
             </div>
             <div className={loading ? "center" : "body"}>
               {loading ? (
@@ -317,19 +354,42 @@ const Container = styled.div`
       height: 100%;
       /* background-color: blue; */
       .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         width: 100%;
         height: 10vh;
         color: #2a2438;
         padding: 1rem;
+        padding-right: 4rem;
         background-color: white;
         /* border-radius: 1rem; */
+        .badge-div {
+          .badge {
+            margin-top: -10px;
+            margin-left: -10px;
+            float: right;
+            padding: 0.14rem 0.4rem;
+            background-color: red;
+            font-size: 10px;
+            border-radius: 50%;
+            color: white;
+          }
+        }
       }
       .body {
         padding: 1rem;
         height: 80vh;
         color: #2a2438;
         background-color: white;
+        overflow-y: scroll;
         /* border-radius: 1rem; */
+      }
+      .body::-webkit-scrollbar {
+        width: 5px;
+      }
+      .body::-webkit-scrollbar-thumb {
+        background: #2a2438;
       }
       .center {
         padding: 1rem;
@@ -338,50 +398,6 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
         background-color: white;
-      }
-    }
-  }
-  @media screen and (max-width: 1280px) {
-    .main {
-      width: 100vw;
-      height: 100vh;
-      flex-direction: column;
-      .side {
-        padding: 0.5rem;
-        width: 100%;
-        height: 10vh;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        img {
-          width: 2.5rem;
-        }
-        h2 {
-          font-size: 1.2rem;
-          /* display: none; */
-        }
-        p {
-          display: none;
-        }
-        .menu {
-          margin-top: 0;
-          align-items: center;
-          flex-direction: row;
-          gap: 2rem;
-          .option {
-            span {
-              display: none;
-            }
-          }
-        }
-      }
-      .content {
-        width: 100vw;
-        height: 90vh;
-        .body {
-          width: 100%;
-          height: 90vh;
-        }
       }
     }
   }

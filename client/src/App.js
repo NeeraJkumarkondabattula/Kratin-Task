@@ -15,6 +15,7 @@ import ApplyDoctor from "./pages/ApplyDoctor";
 import Doctor from "./pages/Doctor";
 import Users from "./pages/Users";
 import Doctors from "./pages/Doctors";
+import Notifications from "./pages/Notifications";
 
 const App = () => {
   // const [user, setUser] = useState();
@@ -88,6 +89,14 @@ const App = () => {
           element={
             <Layout>
               <Doctors />
+            </Layout>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <Layout>
+              <Notifications />
             </Layout>
           }
         />

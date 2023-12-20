@@ -120,7 +120,11 @@ module.exports.applyDoctor = async (req, res) => {
       // console.log(adminId);
       const updateAdmin = await User.findByIdAndUpdate(
         { _id: adminId },
-        { $push: { unseenNotifications: newDoctor._id } }
+        {
+          $push: {
+            unseenNotifications: newDoctor._id,
+          },
+        }
       );
 
       // console.log(updateAdmin);
@@ -145,6 +149,15 @@ module.exports.getDoctor = async (req, res) => {
     const doctor = await Doctor.findOne({ _id: id });
     // console.log(doctors);
     res.status(200).json({ doctor });
+  } catch (error) {}
+};
+
+module.exports.getUsers = async (req, res) => {
+  try {
+    var users = await User.find();
+    users = users.filter((fil) => fil.isUser == true);
+    // users = users.filter((fil) => fil.isDoctor != true);
+    res.status(200).json({ users });
   } catch (error) {}
 };
 
@@ -187,15 +200,27 @@ module.exports.cancelAppointment = async (req, res) => {
 module.exports.getAppointments = async (req, res) => {
   try {
     const { userId } = req.body;
-    const user = await User.findOne({ _id: userId });
-    const appointments = user.appointments;
+    const user = await User.findById({ _id: userId });
+    const doctor = await Doctor.findOne({ userId });
+
     var bookedAppointment;
     var userBookedAppointments = [];
-    for (let i = 0; i < appointments.length; i++) {
-      bookedAppointment = await Doctor.findById({ _id: appointments[i] });
-      userBookedAppointments.push(bookedAppointment);
+    if (!doctor) {
+      const appointments = user.appointments;
+      for (let i = 0; i < appointments.length; i++) {
+        bookedAppointment = await Doctor.findById({ _id: appointments[i] });
+        userBookedAppointments.push(bookedAppointment);
+      }
+      return res.status(200).json({ userBookedAppointments });
+    } else if (doctor) {
+      const appointments = doctor.appointments;
+      for (let i = 0; i < appointments.length; i++) {
+        bookedAppointment = await User.findById({ _id: appointments[i] });
+        userBookedAppointments.push(bookedAppointment);
+      }
+      console.log(userBookedAppointments);
+      return res.status(200).json({ userBookedAppointments });
     }
-    res.status(200).json({ userBookedAppointments });
   } catch (error) {}
 };
 
@@ -204,5 +229,60 @@ module.exports.getProfile = async (req, res) => {
     const { userId } = req.body;
     const user = await User.findById({ _id: userId });
     res.status(200).json({ user });
+  } catch (error) {}
+};
+
+module.exports.getDoctorApplications = async (req, res) => {
+  try {
+    const doctors = await Doctor.find();
+    res.status(200).json({ doctors });
+  } catch (error) {}
+};
+
+module.exports.approveDoctor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doctor = await Doctor.findById({ _id: id });
+    const doctors = await Doctor.findByIdAndUpdate(
+      { _id: id },
+      { doctorStatus: !doctor.doctorStatus }
+    );
+    const userId = doctor.userId;
+    const userCheck = await User.findById({ _id: userId });
+    const user = await User.findByIdAndUpdate(
+      { _id: userId },
+      {
+        isDoctor: !userCheck.isDoctor,
+        isUser: !userCheck.isUser,
+      }
+    );
+
+    await user.save();
+    await doctors.save();
+    res.status(200).json({ doctors });
+  } catch (error) {}
+};
+
+module.exports.getNotifications = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const user = await User.findById({ _id: userId });
+    const notifications = user.unseenNotifications;
+    res.status(200).json({ notifications });
+  } catch (error) {}
+};
+
+module.exports.readNofification = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { id } = req.params;
+    const user = await User.findById({ _id: userId });
+    var notifications = user.unseenNotifications;
+    (notifications = notifications.filter(
+      (notification) => notification != id
+    )),
+      (user.unseenNotifications = notifications);
+    await user.save();
+    res.status(200).json({ notifications });
   } catch (error) {}
 };

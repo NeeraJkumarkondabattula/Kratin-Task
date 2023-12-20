@@ -50,6 +50,18 @@ const ApplyDoctor = () => {
         })
         .then((res) => {
           console.log(res.data);
+          setFirstname("");
+          setAddress("");
+          setEmail("");
+          setExperience("");
+          setFeeperconsultation("");
+          setLastname("");
+          setLastworked("");
+          setPhone("");
+          setQualification("");
+          setSpecialization("");
+          setWorkingfrom("");
+          setWorkingtoo("");
         });
     } catch (err) {
       toast.error(err.response.data.message);
@@ -66,7 +78,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your First Name..."
-            // value={name}
+            value={firstName}
             id="firstName"
             onChange={(e) => setFirstname(e.target.value)}
           />
@@ -76,7 +88,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Last Name..."
-            // value={name}
+            value={lastName}
             id="lastName"
             onChange={(e) => setLastname(e.target.value)}
           />
@@ -86,7 +98,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Email..."
-            // value={name}
+            value={email}
             id="email"
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -96,7 +108,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Phone Number..."
-            // value={name}
+            value={phone}
             id="phoneNumber"
             onChange={(e) => setPhone(e.target.value)}
           />
@@ -106,7 +118,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Address..."
-            // value={name}
+            value={address}
             id="address"
             onChange={(e) => setAddress(e.target.value)}
           />
@@ -116,7 +128,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Qualification..."
-            // value={name}
+            value={qualification}
             id="qualification"
             onChange={(e) => setQualification(e.target.value)}
           />
@@ -126,7 +138,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your experience..."
-            // value={name}
+            value={experience}
             id="experience"
             onChange={(e) => setExperience(e.target.value)}
           />
@@ -136,7 +148,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Specialization..."
-            // value={name}
+            value={specialization}
             id="specialization"
             onChange={(e) => setSpecialization(e.target.value)}
           />
@@ -146,7 +158,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Last Worked..."
-            // value={name}
+            value={lastWorked}
             id="lastworked"
             onChange={(e) => setLastworked(e.target.value)}
           />
@@ -156,7 +168,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Fee Per Consultation..."
-            // value={name}
+            value={feePerConsultation}
             id="feePerConsultation"
             onChange={(e) => setFeeperconsultation(e.target.value)}
           />
@@ -166,7 +178,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Working Time From..."
-            // value={name}
+            value={fromTime}
             id="workfrom"
             onChange={(e) => setWorkingfrom(e.target.value)}
           />
@@ -176,7 +188,7 @@ const ApplyDoctor = () => {
           <input
             type="text"
             placeholder="Enter your Working Time Too..."
-            // value={name}
+            value={toTime}
             id="workToo"
             onChange={(e) => setWorkingtoo(e.target.value)}
           />
